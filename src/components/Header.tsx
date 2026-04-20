@@ -71,7 +71,7 @@ export function Header() {
             aria-label={`Carrinho com ${count} itens`}
           >
             <ShoppingBag className="h-[18px] w-[18px]" />
-            <span className="font-medium">{count}</span>
+            <span className="font-medium">{user ? count : 0}</span>
           </Link>
 
           {user ? (

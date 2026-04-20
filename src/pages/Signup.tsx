@@ -8,18 +8,19 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 
 const schema = z.object({
-  email: z.string().trim().email("Email inválido").max(255),
-  password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
-});
+    email: z.string().trim().email("Email inválido").max(255),
+    password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
+  });
 
-export default function Signup() {
-  const { signUp } = useAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  export default function Signup() {
+    const { signUp } = useAuth();
+    const navigate = useNavigate();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = async (e: FormEvent) => {
+    const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse({ email, password });
     if (!parsed.success) {
@@ -27,12 +28,16 @@ export default function Signup() {
       return;
     }
     setSubmitting(true);
-    const { error } = await signUp(parsed.data.email, parsed.data.password);
+
+    const { error } = await signUp(email, password, name); // ← usa o contexto
+
     setSubmitting(false);
+
     if (error) {
       toast({ title: "Não foi possível criar conta", description: error, variant: "destructive" });
       return;
     }
+
     toast({ title: "Conta criada", description: "Você já pode navegar pela loja." });
     navigate("/", { replace: true });
   };
@@ -46,6 +51,17 @@ export default function Signup() {
         </div>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="name"
+              autoComplete="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
